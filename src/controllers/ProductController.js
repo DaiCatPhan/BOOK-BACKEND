@@ -1,10 +1,109 @@
+import ProductService from "../services/ProductService";
 class ProductController {
   read = async (req, res) => {
-    res.json("read product");
+    const { idProduct } = req.query;
+
+    if (!idProduct) {
+      return res.json({
+        EM: "Không có id book !!!!",
+        EC: -1,
+        DT: [],
+      });
+    }
+
+    try {
+      const data = await ProductService.read(req.query);
+      return res.json({
+        EM: data.EM,
+        EC: data.EC,
+        DT: data.DT,
+      });
+    } catch (error) {
+      console.log(">>> error", error);
+    }
   };
 
+  readAllType = async (req, res) => {
+    // const { type , author } = req.query;
+    // try {
+    //   const data = await ProductService.readAllType(req.query);
+    //   return res.json({
+    //     EM: data.EM,
+    //     EC: data.EC,
+    //     DT: data.DT,
+    //   });
+    // } catch (error) {
+    //   console.log(">>> error", error);
+    // }
+  };
+
+  update = async (req, res) => {
+    const { idProduct, TenHH, MoTaHH, Gia, SoLuongHang, GhiChu, TheLoai } =
+      req.body;
+    if (!idProduct || !TenHH || !MoTaHH || !Gia || !TheLoai) {
+      return {
+        EM: "Nhập thiếu trường dữ liệu !!! ",
+        EC: -2,
+        DT: [],
+      };
+    }
+    try {
+      // check vaidate
+      const data = await ProductService.update(req.body);
+      return res.json({
+        EM: data.EM,
+        EC: data.EC,
+        DT: data.DT,
+      });
+    } catch (error) {
+      console.log(">>> error", error);
+    }
+  };
+
+  delete = async (req, res) => {
+    const { idProduct } = req.body;
+
+    if (!idProduct) {
+      return {
+        EM: "Nhập thiếu trường dữ liệu !!! ",
+        EC: -2,
+        DT: [],
+      };
+    }
+    try {
+      // check vaidate
+      const data = await ProductService.deleted(req.body);
+      return res.json({
+        EM: data.EM,
+        EC: data.EC,
+        DT: data.DT,
+      });
+    } catch (error) {
+      console.log(">>> error", error);
+    }
+  };
+
+  // [POST] /api/v1/product/create
   create = async (req, res) => {
-    res.json(req.body);
+    const { TenHH, MoTaHH, Gia, SoLuongHang, GhiChu, TheLoai } = req.body;
+    if (!TenHH || !MoTaHH || !Gia || !TheLoai) {
+      return {
+        EM: "Nhập thiếu trường dữ liệu !!! ",
+        EC: -2,
+        DT: [],
+      };
+    }
+    try {
+      // check vaidate
+      const data = await ProductService.create(req.body);
+      return res.json({
+        EM: data.EM,
+        EC: data.EC,
+        DT: data.DT,
+      });
+    } catch (error) {
+      console.log(">>> error", error);
+    }
   };
 }
 

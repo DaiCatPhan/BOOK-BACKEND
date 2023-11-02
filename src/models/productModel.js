@@ -14,7 +14,6 @@ const productSchema = new Schema(
     timestamps: true,
   }
 );
-const HangHoa =
-  models.productSchema || mongoose.model("HangHoa", productSchema);
+const HangHoa = mongoose.model("HangHoa", productSchema);
 
 export default HangHoa;
