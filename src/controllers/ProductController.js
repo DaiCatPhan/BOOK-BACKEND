@@ -88,26 +88,36 @@ class ProductController {
     const { TenHH, MoTaHH, Gia, SoLuongHang, GhiChu, TheLoai, TacGia } =
       req.body;
 
+    const dataBody = {
+      TenHH: TenHH,
+      MoTaHH: MoTaHH,
+      Gia: +Gia,
+      SoLuongHang: +SoLuongHang,
+      GhiChu: GhiChu,
+      TheLoai: TheLoai,
+      TacGia: TacGia,
+    };
+
     const HinhHH = req?.file?.path;
 
     if (!HinhHH) {
-      return {
-        EM: "Upload hình lỗi !!! ",
+      return res.json({
+        EM: "Upload hình lỗi , không có hình !!! ",
         EC: -2,
         DT: [],
-      };
+      });
     }
 
     if (!TenHH || !MoTaHH || !Gia || !TheLoai || !TacGia) {
-      return {
+      return res.json({
         EM: "Nhập thiếu trường dữ liệu !!! ",
         EC: -2,
         DT: [],
-      };
+      });
     }
     try {
       // check vaidate
-      const data = await ProductService.create(req.body, HinhHH);
+      const data = await ProductService.create(dataBody, HinhHH);
       return res.json({
         EM: data.EM,
         EC: data.EC,
