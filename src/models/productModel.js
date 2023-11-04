@@ -9,6 +9,8 @@ const productSchema = new Schema(
     SoLuongHang: Number,
     GhiChu: String,
     TheLoai: String,
+    TacGia: String,
+    HinhHH: String,
   },
   {
     timestamps: true,

@@ -85,8 +85,20 @@ class ProductController {
 
   // [POST] /api/v1/product/create
   create = async (req, res) => {
-    const { TenHH, MoTaHH, Gia, SoLuongHang, GhiChu, TheLoai } = req.body;
-    if (!TenHH || !MoTaHH || !Gia || !TheLoai) {
+    const { TenHH, MoTaHH, Gia, SoLuongHang, GhiChu, TheLoai, TacGia } =
+      req.body;
+
+    const HinhHH = req?.file?.path;
+
+    if (!HinhHH) {
+      return {
+        EM: "Upload hình lỗi !!! ",
+        EC: -2,
+        DT: [],
+      };
+    }
+
+    if (!TenHH || !MoTaHH || !Gia || !TheLoai || !TacGia) {
       return {
         EM: "Nhập thiếu trường dữ liệu !!! ",
         EC: -2,
@@ -95,7 +107,7 @@ class ProductController {
     }
     try {
       // check vaidate
-      const data = await ProductService.create(req.body);
+      const data = await ProductService.create(req.body, HinhHH);
       return res.json({
         EM: data.EM,
         EC: data.EC,

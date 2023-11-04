@@ -27,7 +27,7 @@ const getProductById = async (id) => {
   return product;
 };
 
-const create = async (rawData) => {
+const create = async (rawData, HinhHH) => {
   try {
     const existProdut = await existProductByName(rawData?.TenHH);
     if (existProdut) {
@@ -45,6 +45,7 @@ const create = async (rawData) => {
       SoLuongHang: rawData.SoLuongHang,
       GhiChu: rawData.GhiChu,
       TheLoai: rawData.TheLoai,
+      HinhHH: HinhHH,
     });
 
     if (data) {
