@@ -23,17 +23,30 @@ class ProductController {
     }
   };
 
-  readAllType = async (req, res) => {
-    // const { type , author } = req.query;
-    // try {
-    //   const data = await ProductService.readAllType(req.query);
-    //   return res.json({
-    //     EM: data.EM,
-    //     EC: data.EC,
-    //     DT: data.DT,
-    //   });
-    // } catch (error) {
-    //   console.log(">>> error", error);
+  // [GET] /api/v1/product/readPanigate
+  readPanigate = async (req, res) => {
+    try {
+      let page = +req.query.page;
+      let limit = +req.query.limit;
+      let sort = req.query.sort;
+      let type = req.query.type;
+      let author = req.query.author;
+
+      let data = await ProductService.getBookWithPagination(req.query);
+
+      return res.status(200).json({
+        EM: data.EM,
+        EC: data.EC,
+        DT: data.DT,
+      });
+    } catch (err) {
+      console.log("err <<< ", err);
+      return res.status(500).json({
+        EM: "error server", // error message
+        EC: "-1", // error code
+        DT: "", // data
+      });
+    }
     // }
   };
 

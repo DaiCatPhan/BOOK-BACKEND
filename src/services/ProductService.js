@@ -46,6 +46,7 @@ const create = async (rawData, HinhHH) => {
       GhiChu: rawData.GhiChu,
       TheLoai: rawData.TheLoai,
       HinhHH: HinhHH,
+      TacGia: rawData.TacGia,
     });
 
     if (data) {
@@ -106,29 +107,67 @@ const update = async (rawData) => {
   }
 };
 
-const readAllType = async (rawData) => {
-  const { type, author } = rawData;
-  // try {
-  //   const typeBook = await db.Product.findAll({ TheLoai: type });
-  //   const authorBook = await db.Product.findAll({ author: author });
-  //   const allBook = await db.Product.findAll({});
+const getBookWithPagination = async (rawData) => {
+  const { page, limit, sort, type, author } = rawData;
 
-  //   const data = {}
+  console.log(">>>>>> rawData", rawData);
 
-  //   return {
-  //     EM: 'Lấy dữ liệu thành công',
-  //     EC : 0,
-  //     DT: data,
-  //   }
+  try {
+    if (!page && !limit && !sort && !type && !author) {
+      const data = await db.Product.find({});
+      return {
+        EM: "Lấy dữ liệu thành công",
+        EC: 0,
+        DT: data,
+      };
+    }
 
-  // } catch (error) {
-  //   console.log(">>> error", error);
-  //   return {
-  //     EM: " Lỗi server",
-  //     EC: -5,
-  //     DT: [],
-  //   };
-  // }
+    let offset = (page - 1) * limit;
+
+    const filter = {};
+    const sorter = {};
+
+    if (sort?.startsWith("-")) {
+      sorter[sort.substring(1)] = -1;
+    } else {
+      sorter[sort] = 1;
+    }
+
+    if (author) {
+      filter.TacGia = author;
+    }
+
+    if (type) {
+      filter.TheLoai = type;
+    }
+
+    const pagination = await db.Product.find(filter)
+      .skip(offset)
+      .limit(limit)
+      .sort(sorter)
+      .exec();
+
+    const totalRecords = await db.Product.countDocuments(filter);
+    const meta = {
+      current: page,
+      pageSize: limit,
+      pages: Math.ceil(totalRecords / limit),
+      total: totalRecords,
+    };
+    const data = { pagination, meta };
+    return {
+      EM: "Lấy dữ liệu thành công",
+      EC: 0,
+      DT: data,
+    };
+  } catch (error) {
+    console.log(">>> error", error);
+    return {
+      EM: " Lỗi server",
+      EC: -5,
+      DT: [],
+    };
+  }
 };
 
 const read = async (rawData) => {
@@ -191,4 +230,4 @@ const deleted = async (rawData) => {
   }
 };
 
-export default { create, readAllType, read, update, deleted };
+export default { create, getBookWithPagination, read, update, deleted };
