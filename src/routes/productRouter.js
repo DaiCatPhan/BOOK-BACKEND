@@ -5,7 +5,7 @@ import uploadCloud from "../middlewares/uploadImage";
 
 router.get("/read", ProductController.read);
 router.get("/readPanigate", ProductController.readPanigate);
-router.put("/update", ProductController.update);
+router.put("/update", uploadCloud.single("HinhHH"), ProductController.update);
 router.delete("/delete", ProductController.delete);
 router.post("/create", uploadCloud.single("HinhHH"), ProductController.create);
 

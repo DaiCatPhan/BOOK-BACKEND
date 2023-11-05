@@ -1,5 +1,6 @@
 import ProductService from "../services/ProductService";
 class ProductController {
+  // [GET] /api/v1/product/read
   read = async (req, res) => {
     const { idProduct } = req.query;
 
@@ -50,10 +51,28 @@ class ProductController {
     // }
   };
 
+  // [PUT] /api/v1/product/update
   update = async (req, res) => {
-    const { idProduct, TenHH, MoTaHH, Gia, SoLuongHang, GhiChu, TheLoai } =
-      req.body;
-    if (!idProduct || !TenHH || !MoTaHH || !Gia || !TheLoai) {
+    const {
+      idProduct,
+      TenHH,
+      MoTaHH,
+      Gia,
+      SoLuongHang,
+      GhiChu,
+      TheLoai,
+      TacGia,
+    } = req.body;
+    const HinhHH = req?.file?.path;
+    if (
+      !idProduct ||
+      !TenHH ||
+      !MoTaHH ||
+      !Gia ||
+      !TheLoai ||
+      !TacGia ||
+      !SoLuongHang
+    ) {
       return {
         EM: "Nhập thiếu trường dữ liệu !!! ",
         EC: -2,
@@ -62,7 +81,7 @@ class ProductController {
     }
     try {
       // check vaidate
-      const data = await ProductService.update(req.body);
+      const data = await ProductService.update(req.body, HinhHH);
       return res.json({
         EM: data.EM,
         EC: data.EC,
@@ -73,6 +92,7 @@ class ProductController {
     }
   };
 
+  // [DELETE] /api/v1/product/delete
   delete = async (req, res) => {
     const { idProduct } = req.body;
 

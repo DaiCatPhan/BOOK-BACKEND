@@ -66,7 +66,7 @@ const create = async (rawData, HinhHH) => {
   }
 };
 
-const update = async (rawData) => {
+const update = async (rawData, HinhHH) => {
   try {
     const existProdut = await existProductById(rawData?.idProduct);
     if (!existProdut) {
@@ -86,6 +86,8 @@ const update = async (rawData) => {
         SoLuongHang: rawData.SoLuongHang,
         GhiChu: rawData.GhiChu,
         TheLoai: rawData.TheLoai,
+        HinhHH: HinhHH,
+        TacGia: rawData.TacGia,
       },
       { new: true }
     );
