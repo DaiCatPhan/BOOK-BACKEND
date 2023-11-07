@@ -54,8 +54,8 @@ class AuthenticationController {
       if (data.EC === 0) {
         return res
           .cookie("token", data.DT.token, {
-            sameSite: "strict",
-            secure: false,
+            sameSite: "none",
+            secure: true,
             httpOnly: true,
           })
           .status(200)
@@ -116,4 +116,3 @@ class AuthenticationController {
 }
 
 export default new AuthenticationController();
-
