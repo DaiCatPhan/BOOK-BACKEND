@@ -3,16 +3,17 @@ const { Schema } = mongoose;
 
 const customerSchema = new Schema(
   {
-    HoTenKH: String,
+    Email: String,
+    HoTen: String,
     Password: String,
     DiaChi: String,
     SoDienThoai: String,
+    Role: String,
   },
   {
     timestamps: true,
   }
 );
-const KhachHang =
-  models.customerSchema || mongoose.model("KhachHang", customerSchema);
+const KhachHang = mongoose.model("KhachHang", customerSchema);
 
 export default KhachHang;

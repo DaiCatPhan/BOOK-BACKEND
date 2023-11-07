@@ -1,6 +1,7 @@
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import "dotenv/config";
 
 import route from "./routes/index";
@@ -13,6 +14,9 @@ import db from "./configs/db/index.js";
 
 // Thư viên morgan
 app.use(morgan("combined"));
+
+// Cookie-parse
+app.use(cookieParser());
 
 // chia sẻ tài nguyên
 const corsOptions = {
