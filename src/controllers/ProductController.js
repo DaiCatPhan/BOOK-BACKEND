@@ -63,7 +63,9 @@ class ProductController {
       TheLoai,
       TacGia,
     } = req.body;
-    const HinhHH = req?.file?.path;
+
+    const HinhHH = req?.file?.path || req.body.HinhHH;
+
     if (
       !idProduct ||
       !TenHH ||
@@ -73,12 +75,13 @@ class ProductController {
       !TacGia ||
       !SoLuongHang
     ) {
-      return {
+      return res.json({
         EM: "Nhập thiếu trường dữ liệu !!! ",
         EC: -2,
         DT: [],
-      };
+      });
     }
+
     try {
       // check vaidate
       const data = await ProductService.update(req.body, HinhHH);
@@ -95,13 +98,12 @@ class ProductController {
   // [DELETE] /api/v1/product/delete
   delete = async (req, res) => {
     const { idProduct } = req.body;
-
     if (!idProduct) {
-      return {
+      return res.json({
         EM: "Nhập thiếu trường dữ liệu !!! ",
         EC: -2,
         DT: [],
-      };
+      });
     }
     try {
       // check vaidate

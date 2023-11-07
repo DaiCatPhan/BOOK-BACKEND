@@ -112,8 +112,6 @@ const update = async (rawData, HinhHH) => {
 const getBookWithPagination = async (rawData) => {
   const { page, limit, sort, type, author } = rawData;
 
-  console.log(">>>>>> rawData", rawData);
-
   try {
     if (!page && !limit && !sort && !type && !author) {
       const data = await db.Product.find({});
