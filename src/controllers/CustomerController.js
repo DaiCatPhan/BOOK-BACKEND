@@ -22,6 +22,20 @@ class CustomerController {
       console.log(">>> error", error);
     }
   }
+
+  async readPanigation(req, res) {
+    try {
+      // check vaidate
+      const data = await CustomerService.readPanigation();
+      return res.json({
+        EM: data.EM,
+        EC: data.EC, 
+        DT: data.DT, 
+      });
+    } catch (error) {
+      console.log(">>> error", error);
+    }
+  }
 }
 
 export default new CustomerController();
