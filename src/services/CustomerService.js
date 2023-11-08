@@ -58,42 +58,48 @@ const update = async (rawData) => {
 };
 
 const readPanigation = async (rawData) => {
-  return res.json('readPanigion')
+  const { page, limit, sort } = rawData;
+
   try {
-    const existCus = await existCustomerByEmail(rawData.Email);
-    if (!existCus) {
+    if (!page && !limit && !sort) {
+      const data = await db.Customer.find({});
       return {
-        EM: "Người dùng không tồn tại !!! ",
-        EC: -2,
-        DT: [],
-      };
-    }
-
-    const data = await db.Customer.findOneAndUpdate(
-      { Email: rawData.Email },
-      {
-        HoTen: rawData.HoTen,
-        SoDienThoai: rawData.SoDienThoai,
-        DiaChi: rawData.DiaChi,
-      },
-      { new: true }
-    );
-
-    if (data) {
-      return {
-        EM: "Update sản phẩm thành công ",
+        EM: "Lấy dữ liệu thành công",
         EC: 0,
         DT: data,
       };
     }
 
-    if (data) {
-      return {
-        EM: "Tạo sản phẩm thành công ",
-        EC: 0,
-        DT: data,
-      };
+    let offset = (page - 1) * limit;
+
+    const filter = {};
+    const sorter = {};
+
+    if (sort?.startsWith("-")) {
+      sorter[sort.substring(1)] = -1;
+    } else {
+      sorter[sort] = 1;
     }
+
+    const pagination = await db.Customer.find(filter)
+      .skip(offset)
+      .limit(limit)
+      .sort(sorter)
+      .exec();
+
+    const totalRecords = await db.Customer.countDocuments(filter);
+    const meta = {
+      current: page,
+      pageSize: limit,
+      pages: Math.ceil(totalRecords / limit),
+      total: totalRecords,
+    };
+    const data = { pagination, meta };
+    return {
+      EM: "Lấy dữ liệu thành công",
+      EC: 0,
+      DT: data,
+    };
   } catch (error) {
     console.log(">>> error", error);
     return {
@@ -104,7 +110,7 @@ const readPanigation = async (rawData) => {
   }
 };
 
-const deleted= async (rawData) => {
+const deleted = async (rawData) => {
   try {
     const existCus = await existCustomerByEmail(rawData.Email);
     if (!existCus) {
@@ -195,7 +201,5 @@ const read = async (rawData) => {
     };
   }
 };
-
- 
 
 export default { update, readPanigation };
