@@ -5,14 +5,15 @@ const orderSchema = new Schema(
   {
     MSKH: String,
     MSNV: String,
-    NGAYDH: String,
-    NGAYGH: String,
-    TrangThaiHD: String,
+    NgayDH: String,
+    NgayGH: String,
+    TrangthaiHD: String,
+    Money: Number,
   },
   {
     timestamps: true,
   }
 );
-const DatHang = models.orderSchema || mongoose.model("DatHang", orderSchema);
+const DatHang = mongoose.model("DatHang", orderSchema);
 
 export default DatHang;

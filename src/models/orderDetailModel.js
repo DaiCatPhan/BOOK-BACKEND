@@ -13,8 +13,6 @@ const orderDetailSchema = new Schema(
     timestamps: true,
   }
 );
-const ChiTietDatHang =
-  models.orderDetailSchema ||
-  mongoose.model("ChiTietDatHang", orderDetailSchema);
+const ChiTietDatHang = mongoose.model("ChiTietDatHang", orderDetailSchema);
 
 export default ChiTietDatHang;
