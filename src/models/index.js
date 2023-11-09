@@ -3,5 +3,6 @@ import Customer from "./customerModel";
 import Staff from "./staffModel";
 import Order from "./orderModel";
 import OrderDetail from "./orderDetailModel";
+import Cart from "./CartModel";
 
-export default { Product, Customer, Staff, Order, OrderDetail };
+export default { Cart, Product, Customer, Staff, Order, OrderDetail };
