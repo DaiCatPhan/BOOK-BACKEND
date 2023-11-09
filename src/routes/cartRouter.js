@@ -4,8 +4,7 @@ import CartController from "../controllers/CartController";
 
 router.post("/create", CartController.create);
 router.get("/readPanigation", CartController.readPanigation);
-router.get("/read", CartController.read);
-router.put("/update", CartController.update);
+router.patch("/update", CartController.update);
 router.delete("/delete", CartController.delete);
 
 export default router;

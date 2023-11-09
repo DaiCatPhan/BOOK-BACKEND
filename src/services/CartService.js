@@ -20,7 +20,6 @@ const create = async (rawData) => {
         },
         {
           SoLuong: +exitHH.SoLuong + +rawData.SoLuong,
-          Money: (+exitHH.SoLuong + +rawData.SoLuong) * +exitHH.Gia,
         },
         { new: true }
       );
@@ -35,8 +34,6 @@ const create = async (rawData) => {
       IdUser: rawData.IdUser,
       IdHangHoa: rawData.IdHangHoa,
       SoLuong: rawData.SoLuong,
-      Gia: rawData.Gia,
-      Money: rawData.SoLuong * rawData.Gia,
     });
 
     if (data) {
@@ -56,6 +53,125 @@ const create = async (rawData) => {
   }
 };
 
+const readPanigation = async (rawData) => {
+  const { page, limit, sort, IdUser } = rawData;
 
+  try {
+    if (!page && !limit && !sort) {
+      const data = await db.Cart.find({
+        IdUser: IdUser,
+      });
+      return {
+        EM: "Lấy dữ liệu thành công",
+        EC: 0,
+        DT: data,
+      };
+    }
 
-export default { create };
+    let offset = (page - 1) * limit;
+
+    const filter = {};
+    const sorter = {};
+
+    if (sort?.startsWith("-")) {
+      sorter[sort.substring(1)] = -1;
+    } else {
+      sorter[sort] = 1;
+    }
+
+    if (IdUser) {
+      filter.IdUser = IdUser;
+    }
+
+    const pagination = await db.Cart.find(filter)
+      .skip(offset)
+      .limit(limit)
+      .sort(sorter)
+      .exec();
+
+    const totalRecords = await db.Cart.countDocuments(filter);
+    const meta = {
+      current: page,
+      pageSize: limit,
+      pages: Math.ceil(totalRecords / limit),
+      total: totalRecords,
+    };
+    const data = { pagination, meta };
+    return {
+      EM: "Lấy dữ liệu thành công",
+      EC: 0,
+      DT: data,
+    };
+  } catch (error) {
+    console.log(">>> error", error);
+    return {
+      EM: " Lỗi server",
+      EC: -5,
+      DT: [],
+    };
+  }
+};
+
+const updateNumberCart = async (rawData) => {
+  try {
+    const cart = await db.Cart.findById({ _id: rawData.idCart });
+
+    if (!cart) {
+      return {
+        EM: "Không tìm thấy idCart ! ",
+        EC: -2,
+        DT: [],
+      };
+    }
+
+    const updateNumber = await db.Cart.findOneAndUpdate(
+      { _id: rawData.idCart },
+      { $set: { SoLuong: rawData.SoLuong } },
+      { new: true }
+    );
+
+    return {
+      EM: "Cập nhật số lượng  thành công ",
+      EC: 0,
+      DT: updateNumber,
+    };
+  } catch (error) {
+    console.log(">>> error", error);
+    return {
+      EM: " Lỗi server",
+      EC: -5,
+      DT: [],
+    };
+  }
+};
+
+const deletedCart = async (rawData) => {
+  try {
+    const exitID_Cart = await db.Cart.findById({ _id: rawData.idCart });
+    if (!exitID_Cart) {
+      return {
+        EM: "Không tồn tại ID CART !!!",
+        EC: -2,
+        DT: exitID_Cart,
+      };
+    }
+
+    const deletedCart = await db.Cart.findByIdAndDelete({
+      _id: rawData.idCart,
+    });
+    return {
+      EM: "Xóa sản phẩm thành công  !!!",
+      EC: 0,
+      DT: deletedCart,
+    };
+  } catch (error) {
+    console.log(">>> error", error);
+    return {
+      EM: " Lỗi server",
+      EC: -5,
+      DT: [],
+    };
+  }
+};
+
+export default { create, readPanigation, updateNumberCart, deletedCart };

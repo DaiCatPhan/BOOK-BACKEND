@@ -6,8 +6,6 @@ const cartSchema = new Schema(
     IdUser: String,
     IdHangHoa: String,
     SoLuong: Number,
-    Gia: Number,
-    Money: Number,
   },
   {
     timestamps: true,
