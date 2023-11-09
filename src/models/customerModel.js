@@ -8,7 +8,7 @@ const customerSchema = new Schema(
     Password: String,
     DiaChi: String,
     SoDienThoai: String,
-    Role: String,
+    Role: String, 
   },
   {
     timestamps: true,

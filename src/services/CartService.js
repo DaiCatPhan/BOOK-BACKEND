@@ -3,24 +3,22 @@ import CartController from "../controllers/CartController.js";
 
 const exitHangHoaCart = async (idHangHoa, idUser) => {
   const HangHoa = await db.Cart.findOne({
+    IdUser: idUser,
     IdHangHoa: idHangHoa,
-    idUser: idUser,
   });
   return HangHoa;
 };
 
 const create = async (rawData) => {
   try {
-    const exitHH = await exitHangHoaCart(rawData.IdHangHoa, rawData.idUser);
+    const exitHH = await exitHangHoaCart(rawData.IdHangHoa, rawData.IdUser);
 
     if (exitHH) {
       const updateHH = await db.Cart.findOneAndUpdate(
         {
           _id: exitHH._id,
         },
-        {
-          SoLuong: +exitHH.SoLuong + +rawData.SoLuong,
-        },
+        { $set: { SoLuong: +exitHH.SoLuong + +rawData.SoLuong } },
         { new: true }
       );
       return {
@@ -58,9 +56,16 @@ const readPanigation = async (rawData) => {
 
   try {
     if (!page && !limit && !sort) {
-      const data = await db.Cart.find({
-        IdUser: IdUser,
-      });
+      const data = await db.Cart.find({ IdUser: IdUser })
+        .populate({
+          path: "IdUser", // Liên kết với KhachHang
+          model: "KhachHang", // Tên model của KhachHang
+        })
+        .populate({
+          path: "IdHangHoa", // Liên kết với KhachHang
+          model: "HangHoa", // Tên model của KhachHang
+        });
+
       return {
         EM: "Lấy dữ liệu thành công",
         EC: 0,
