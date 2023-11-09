@@ -4,8 +4,8 @@ class CartController {
   // [POST] /api/v1/cart/create
 
   async create(req, res) {
-    const { IdUser, IdHangHoa, SoLuong  } = req.body;
-    if (!IdUser || !IdHangHoa || !SoLuong  ) {
+    const { IdUser, IdHangHoa, SoLuong } = req.body;
+    if (!IdUser || !IdHangHoa || !SoLuong) {
       return res.json({
         EM: "Nhập thiếu trường dữ liệu !!! ",
         EC: -2,
@@ -54,6 +54,7 @@ class CartController {
   // [PATCH] /api/v1/cart/update
   async update(req, res) {
     const { idCart, SoLuong } = req.body;
+    console.log("idasf", idCart, SoLuong);
     if (!idCart || !SoLuong) {
       return res.json({
         EM: "Thiếu dữ liệu  !!!!",
