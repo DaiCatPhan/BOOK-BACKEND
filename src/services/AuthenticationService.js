@@ -57,7 +57,6 @@ const registerNewUser = async (rawUserData) => {
     // B1
     let isEmailExits = await checkEmailExits(Email);
     let isPhoneExits = await checkPhoneExits(SoDienThoai);
-    console.log(">>>>>>", isEmailExits, isPhoneExits);
 
     if (isEmailExits === true) {
       return {
@@ -138,6 +137,7 @@ const handleUserLogin = async (rawData) => {
         HoTen: user.HoTen,
         Email: user.Email,
         Role: user.Role,
+        SoDienThoai: user.SoDienThoai,
       };
       const token = jwt.sign(tokentData, process.env.JWT_KEY);
 

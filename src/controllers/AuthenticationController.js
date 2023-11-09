@@ -83,7 +83,7 @@ class AuthenticationController {
       res.cookie("token", "");
       return res
         .status(200)
-        .json({ sta: "Success", msg: "Logout successfully" });
+        .json({ EM: "Đăng xuất thành công", EC: 0, DT: [] });
     } catch (err) {
       return res.status(500).json({ msg: "Error logout.", err: err.message });
     }
