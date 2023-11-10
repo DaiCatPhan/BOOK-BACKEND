@@ -6,7 +6,10 @@ class OrderController {
   async create(req, res) {
     const { DataUpdateCustomer, DataOrder } = req.body;
 
+    
+
     if (
+      !DataUpdateCustomer.IDCus ||
       !DataUpdateCustomer.Email ||
       !DataUpdateCustomer.HoTen ||
       !DataUpdateCustomer.SoDienThoai ||
@@ -42,8 +45,27 @@ class OrderController {
   readPanigation(req, res) {
     return res.json("readPanigation");
   }
-  read(req, res) {
-    return res.json("read");
+
+
+  async read(req, res) {
+    const { ID_KhachHang } = req.query;
+
+    if (!ID_KhachHang) {
+      return res.json({
+        EM: "Không có ID_KhachHang !!! ",
+        EC: -2,
+        DT: [],
+      });
+    }
+
+    const data = await OrderService.read({ ID_KhachHang });
+    if (data) {
+      return res.json({
+        EM: data.EM,
+        EC: data.EC,
+        DT: data.DT,
+      });
+    }
   }
   update(req, res) {
     return res.json("udpate Order");

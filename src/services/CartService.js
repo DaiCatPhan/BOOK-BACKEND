@@ -59,7 +59,7 @@ const readPanigation = async (rawData) => {
       const data = await db.Cart.find({ IdUser: IdUser })
         .populate({
           path: "IdUser", // Liên kết với KhachHang
-          model: "KhachHang", // Tên model của KhachHang
+          model: "KhachHang", // Tên model của KhachHang 
         })
         .populate({
           path: "IdHangHoa", // Liên kết với KhachHang

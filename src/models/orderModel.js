@@ -3,12 +3,11 @@ const { Schema } = mongoose;
 
 const orderSchema = new Schema(
   {
-    MSKH: String,
-    MSNV: String,
-    NgayDH: String,
-    NgayGH: String,
+    MSKH: { type: mongoose.Types.ObjectId, ref: "KhachHang" },
+    MSNV: { type: mongoose.Types.ObjectId, ref: "NhanVien" },
+    NgayDH: { type: Date, default: Date.now },
+    NgayGH: Date,
     TrangthaiHD: String,
-    Money: Number,
   },
   {
     timestamps: true,

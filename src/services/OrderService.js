@@ -28,11 +28,7 @@ const create = async (rawData) => {
 
     // Tạo đặt hàng
     const order = await db.Order.create({
-      MSKH: DataUpdateCustomer.Email,
-      MSNV: "",
-      NgayDH: "",
-      NgayGH: "",
-      Money: 0,
+      MSKH: DataUpdateCustomer.IDCus,
       TrangthaiHD: 0,
     });
 
@@ -52,8 +48,6 @@ const create = async (rawData) => {
       _id: { $in: orderIdArrayToDelete },
     };
     const deleteItemCart = await db.Cart.deleteMany(deleteCondition);
-
-    console.log("deleteItemCart", deleteItemCart);
 
     // Tạo chi tiết đặt hàng
     const DataOrderDetail = DataOrder.map((item) => ({
@@ -80,4 +74,43 @@ const create = async (rawData) => {
   }
 };
 
-export default { create };
+const read = async (rawData) => {
+  const { ID_KhachHang } = rawData;
+  try {
+    const CustomerOrder = await db.Order.find({ MSKH: ID_KhachHang })
+      // .populate("MSKH")
+      .lean();
+
+    const result = CustomerOrder.map(async (item) => {
+      let detail = await db.OrderDetail.find({ SoDonDH: item._id })
+        .populate("MSHH")
+        .lean();
+      // return {
+      //   order: item,
+      //   OrderDetail: detail,
+      // };
+
+      return {
+        ...item,
+        OrderDetail: detail,
+      };
+    });
+
+    const data = await Promise.all(result);
+
+    return {
+      EM: "Lấy dữ liệu thành công",
+      EC: 0,
+      DT: data,
+    };
+  } catch (error) {
+    console.log(">>> error", error);
+    return {
+      EM: " Lỗi server",
+      EC: -5,
+      DT: [],
+    };
+  }
+};
+
+export default { create, read };

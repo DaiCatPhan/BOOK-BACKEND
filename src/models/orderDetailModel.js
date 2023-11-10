@@ -3,10 +3,10 @@ const { Schema } = mongoose;
 
 const orderDetailSchema = new Schema(
   {
-    SoDonDH: String,
-    MSHH: String,
+    SoDonDH: { type: mongoose.Types.ObjectId, ref: "DatHang" },
+    MSHH: { type: mongoose.Types.ObjectId, ref: "HangHoa" },
     SoLuong: Number,
-    GiaDatHang: Number,
+    GiaDatHang: Number, 
     GiamGia: Number,
   },
   {
