@@ -2,12 +2,26 @@ import OrderService from "../services/OrderService";
 import CustomerController from "../controllers/CustomerController";
 
 class OrderController {
+  // [POST ] /api/v1/order/create
   async create(req, res) {
-    const { Email, DataUdateCustomer , DataOrder } = req.body;
+    const { DataUpdateCustomer, DataOrder } = req.body;
 
-    if (!Email) {
+    if (
+      !DataUpdateCustomer.Email ||
+      !DataUpdateCustomer.HoTen ||
+      !DataUpdateCustomer.SoDienThoai ||
+      !DataUpdateCustomer.DiaChi
+    ) {
       return res.json({
-        EM: "Nhập thiếu trường dữ liệu !!! ", 
+        EM: "Dữ liệu người dùng không đươc trống !!! ",
+        EC: -2,
+        DT: [],
+      });
+    }
+
+    if (DataOrder.length <= 0) {
+      return res.json({
+        EM: "Không có dữ liệu trong giỏ hàng !!! ",
         EC: -2,
         DT: [],
       });

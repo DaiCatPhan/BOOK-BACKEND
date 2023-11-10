@@ -3,10 +3,10 @@ const { Schema } = mongoose;
 
 const orderDetailSchema = new Schema(
   {
+    SoDonDH: String,
     MSHH: String,
     SoLuong: Number,
     GiaDatHang: Number,
-    Money: Number,
     GiamGia: Number,
   },
   {
