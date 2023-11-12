@@ -6,8 +6,6 @@ class OrderController {
   async create(req, res) {
     const { DataUpdateCustomer, DataOrder } = req.body;
 
-    
-
     if (
       !DataUpdateCustomer.IDCus ||
       !DataUpdateCustomer.Email ||
@@ -42,10 +40,30 @@ class OrderController {
       console.log(">>> error", error);
     }
   }
-  readPanigation(req, res) {
-    return res.json("readPanigation");
+
+  async readPanigation(req, res) {
+    try {
+      let sort = req.query.sort;
+      let type = req.query.type;
+
+      let data = await OrderService.readPagination(req.query);
+
+      return res.status(200).json({
+        EM: data.EM,
+        EC: data.EC,
+        DT: data.DT,
+      });
+    } catch (err) {
+      console.log("err <<< ", err);
+      return res.status(500).json({
+        EM: "error server", // error message
+        EC: "-1", // error code
+        DT: "", // data
+      });
+    }
   }
 
+  // [GET ] /api/v1/order/read
 
   async read(req, res) {
     const { ID_KhachHang } = req.query;
@@ -67,6 +85,7 @@ class OrderController {
       });
     }
   }
+
   update(req, res) {
     return res.json("udpate Order");
   }

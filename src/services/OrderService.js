@@ -113,4 +113,61 @@ const read = async (rawData) => {
   }
 };
 
-export default { create, read };
+const readPagination = async (rawData) => {
+  const { page, limit, type, sort } = rawData;
+
+  try {
+    let offset = (page - 1) * limit;
+
+    const sorter = {};
+    if (sort?.startsWith("-")) {
+      sorter[sort.substring(1)] = -1;
+    } else {
+      sorter[sort] = 1;
+    }
+
+    const order = await db.Order.find({ TrangthaiHD: type })
+      .skip(offset)
+      .limit(limit)
+      .sort(sorter)
+      .populate("MSKH")
+      .lean();
+
+    const result = order.map(async (item) => {
+      let detail = await db.OrderDetail.find({ SoDonDH: item._id })
+
+        .populate("MSHH")
+        .lean();
+
+      return {
+        ...item,
+        OrderDetail: detail,
+      };
+    });
+
+    const pagination = await Promise.all(result);
+
+    const totalRecords = await db.Order.countDocuments({ TrangthaiHD: type });
+    const meta = {
+      current: page,
+      pageSize: limit,
+      pages: Math.ceil(totalRecords / limit),
+      total: totalRecords,
+    };
+    const data = { pagination, meta };
+
+    return {
+      EM: "Lấy dữ liệu thành công",
+      EC: 0,
+      DT: data,
+    };
+  } catch (error) {
+    console.log(">>> error", error);
+    return {
+      EM: " Lỗi server",
+      EC: -5,
+      DT: [],
+    };
+  }
+};
+export default { create, read, readPagination };

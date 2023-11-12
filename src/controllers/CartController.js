@@ -54,7 +54,6 @@ class CartController {
   // [PATCH] /api/v1/cart/update
   async update(req, res) {
     const { idCart, SoLuong } = req.body;
-    console.log("idasf", idCart, SoLuong);
     if (!idCart || !SoLuong) {
       return res.json({
         EM: "Thiếu dữ liệu  !!!!",
@@ -97,6 +96,8 @@ class CartController {
       console.log(">>> error", error);
     }
   }
+
+  
 }
 
 export default new CartController();
