@@ -170,4 +170,43 @@ const readPagination = async (rawData) => {
     };
   }
 };
-export default { create, read, readPagination };
+
+const update = async (rawData) => {
+  try {
+    const existOrder = await db.Order.findById({ _id: rawData.idOrder });
+
+    if (!existOrder) {
+      return {
+        EM: "Sản phẩm không tồn tại !!! ",
+        EC: -2,
+        DT: [],
+      };
+    }
+
+    const data = await db.Order.findByIdAndUpdate(
+      { _id: rawData.idOrder },
+      {
+        TrangthaiHD: rawData.TrangThaiHD,
+        NgayGH: rawData.NgayGH,
+      },
+      { new: true }
+    );
+
+    if (data) {
+      return {
+        EM: "Update sản phẩm thành công ",
+        EC: 0,
+        DT: data,
+      };
+    }
+  } catch (error) {
+    console.log(">>> error", error);
+    return {
+      EM: " Lỗi server",
+      EC: -5,
+      DT: [],
+    };
+  }
+};
+
+export default { create, read, readPagination, update };

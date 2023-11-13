@@ -86,9 +86,34 @@ class OrderController {
     }
   }
 
-  update(req, res) {
-    return res.json("udpate Order");
+  async update(req, res) {
+    try {
+      const { idOrder, TrangThaiHD, NgayGH } = req.body;
+
+      if (!idOrder || !TrangThaiHD || !NgayGH) {
+        return res.status(200).json({
+          EM: "Nhập thiếu trường dữ liệu !!!",
+          EC: -2,
+          DT: [],
+        });
+      }
+
+      try {
+        // check vaidate
+        const data = await OrderService.update(req.body);
+        return res.status(200).json({
+          EM: data.EM,
+          EC: data.EC,
+          DT: data.DT,
+        });
+      } catch (error) {
+        console.log(">>> error", error);
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
   }
+
   delete(req, res) {
     return res.json("delete Order");
   }
