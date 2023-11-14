@@ -2,11 +2,14 @@ import db from "../models/index.js";
 import CustomerController from "../controllers/CustomerController.js";
 import CartService from "./CartService.js";
 
+const handleNumberOrderBook = async () => {};
+
 const create = async (rawData) => {
   const { DataUpdateCustomer, DataOrder } = rawData;
   try {
+    // Kiểm tra số lượng hàng coi đủ không
+
     // Cập nhật thông tin người dùng
-    // Email , SoDienThoai,HoTen,DiaChi
 
     const updateCus = await db.Customer.findOneAndUpdate(
       { Email: DataUpdateCustomer.Email },
@@ -75,20 +78,27 @@ const create = async (rawData) => {
 };
 
 const read = async (rawData) => {
-  const { ID_KhachHang } = rawData;
+  const { ID_KhachHang, type, sort } = rawData;
+
+  const sorter = {};
+  if (sort?.startsWith("-")) {
+    sorter[sort.substring(1)] = -1;
+  } else {
+    sorter[sort] = 1;
+  }
+
   try {
-    const CustomerOrder = await db.Order.find({ MSKH: ID_KhachHang })
-      // .populate("MSKH")
+    const CustomerOrder = await db.Order.find({
+      MSKH: ID_KhachHang,
+      TrangthaiHD: type,
+    })
+      .sort(sorter)
       .lean();
 
     const result = CustomerOrder.map(async (item) => {
       let detail = await db.OrderDetail.find({ SoDonDH: item._id })
         .populate("MSHH")
         .lean();
-      // return {
-      //   order: item,
-      //   OrderDetail: detail,
-      // };
 
       return {
         ...item,
@@ -209,4 +219,44 @@ const update = async (rawData) => {
   }
 };
 
-export default { create, read, readPagination, update };
+const deleted = async (rawData) => {
+  try {
+    const exitProduct = await db.Order.findById(rawData.idOrder);
+    if (!exitProduct) {
+      return {
+        EM: "Không tồn tại đơn hàng !!!",
+        EC: -3,
+        DT: [],
+      };
+    }
+
+    // Xóa trong bảng Đặt hàng chi tiết trước
+    const deleteCondition = {
+      SoDonDH: { $in: rawData.idOrder },
+    };
+    const deleteItemCart = await db.OrderDetail.deleteMany(deleteCondition);
+
+    // Xóa trong bảng đơn hàng
+
+    const deleted = await db.Order.findByIdAndDelete({
+      _id: rawData?.idOrder,
+    });
+
+    if (deleted) {
+      return {
+        EM: "Xóa đơn hàng thành công",
+        EC: 0,
+        DT: deleted,
+      };
+    }
+  } catch (error) {
+    console.log(">>> error", error);
+    return {
+      EM: " Lỗi server",
+      EC: -5,
+      DT: [],
+    };
+  }
+};
+
+export default { create, read, readPagination, update, deleted };

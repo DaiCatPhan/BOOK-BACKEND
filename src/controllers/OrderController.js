@@ -66,7 +66,9 @@ class OrderController {
   // [GET ] /api/v1/order/read
 
   async read(req, res) {
-    const { ID_KhachHang } = req.query;
+    let sort = req.query.sort;
+    let type = req.query.type;
+    let ID_KhachHang = req.query.ID_KhachHang;
 
     if (!ID_KhachHang) {
       return res.json({
@@ -76,7 +78,7 @@ class OrderController {
       });
     }
 
-    const data = await OrderService.read({ ID_KhachHang });
+    const data = await OrderService.read(req.query);
     if (data) {
       return res.json({
         EM: data.EM,
@@ -114,9 +116,28 @@ class OrderController {
     }
   }
 
-  delete(req, res) {
-    return res.json("delete Order");
-  }
-}
+  // [DELETE] /api/v1/order/delete
+  delete = async (req, res) => {
+    const { idOrder } = req.body;
+    if (!idOrder) {
+      return res.json({
+        EM: "Nhập thiếu trường dữ liệu !!! ",
+        EC: -2,
+        DT: [],
+      });
+    }
+    try {
+      // check vaidate
+      const data = await OrderService.deleted(req.body);
+      return res.json({
+        EM: data.EM,
+        EC: data.EC,
+        DT: data.DT,
+      });
+    } catch (error) {
+      console.log(">>> error", error);
+    }
+  };
+} 
 
 export default new OrderController();

@@ -122,7 +122,7 @@ const getBookWithPagination = async (rawData) => {
       };
     }
 
-    let offset = (page - 1) * limit;
+    let offset = (+page - 1) * limit;
 
     const filter = {};
     const sorter = {};
@@ -140,6 +140,8 @@ const getBookWithPagination = async (rawData) => {
     if (type) {
       filter.TheLoai = type;
     }
+
+    console.log("Kiem tra >>>>>>>>>>>", offset, limit);
 
     const pagination = await db.Product.find(filter)
       .skip(offset)
