@@ -7,5 +7,6 @@ router.get("/readPanigation", OrderController.readPanigation);
 router.get("/read", OrderController.read);
 router.put("/update", OrderController.update);
 router.delete("/delete", OrderController.delete);
+router.get("/revenue", OrderController.revenue);
 
 export default router;

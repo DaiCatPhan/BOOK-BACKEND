@@ -117,7 +117,7 @@ class OrderController {
   }
 
   // [DELETE] /api/v1/order/delete
-  delete = async (req, res) => {
+  async delete(req, res) {
     const { idOrder } = req.body;
     if (!idOrder) {
       return res.json({
@@ -137,7 +137,21 @@ class OrderController {
     } catch (error) {
       console.log(">>> error", error);
     }
-  };
-} 
+  }
+
+  async revenue(req, res) {
+    try {
+      // check vaidate
+      const data = await OrderService.revenueProduct();
+      return res.json({
+        EM: data.EM,
+        EC: data.EC,
+        DT: data.DT,
+      });
+    } catch (error) {
+      console.log(">>> error", error);
+    }
+  }
+}
 
 export default new OrderController();

@@ -2,8 +2,6 @@ import db from "../models/index.js";
 import CustomerController from "../controllers/CustomerController.js";
 import CartService from "./CartService.js";
 
-const handleNumberOrderBook = async () => {};
-
 const create = async (rawData) => {
   const { DataUpdateCustomer, DataOrder } = rawData;
   try {
@@ -259,4 +257,31 @@ const deleted = async (rawData) => {
   }
 };
 
-export default { create, read, readPagination, update, deleted };
+const revenueProduct = async (rawData) => {
+  try {
+     
+     
+
+    return {
+      EM: "Doanh thu mỗi sản phẩm mỗi tháng",
+      EC: 0,
+      DT: data,
+    };
+  } catch (error) {
+    console.log(">>> error", error);
+    return {
+      EM: " Lỗi server",
+      EC: -5,
+      DT: [],
+    };
+  }
+};
+
+export default {
+  create,
+  read,
+  readPagination,
+  update,
+  deleted,
+  revenueProduct,
+};
