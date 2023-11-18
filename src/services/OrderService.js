@@ -2,10 +2,67 @@ import db from "../models/index.js";
 import CustomerController from "../controllers/CustomerController.js";
 import CartService from "./CartService.js";
 
+const checkAvailableOrder = async (product_id, quantity) => {
+  const productDoc = await db.Product.findOne({ _id: product_id });
+
+  if (productDoc) {
+    const quantityMax = productDoc.SoLuongHang || 0;
+
+    const hanghoaAll = await db.OrderDetail.find({
+      MSHH: product_id,
+    });
+
+    // Tính số hàng còn lại trong kho của sản phẩm
+    const ordered = hanghoaAll.reduce((total, item) => {
+      return (total += item.SoLuong);
+    }, 0);
+
+    if (ordered + quantity > quantityMax)
+      return {
+        isAvailable: false,
+        quantityAvailable: quantityMax - ordered,
+        productDoc: productDoc.TenHH,
+      };
+
+    return {
+      isAvailable: true,
+      quantityAvailable: quantityMax - ordered,
+    };
+  }
+};
+
 const create = async (rawData) => {
   const { DataUpdateCustomer, DataOrder } = rawData;
   try {
-    // Kiểm tra số lượng hàng coi đủ không
+    // Kiểm tra số lượng hàng coi đủ không================================================================
+
+    const promiseCheckAvailable = DataOrder.map(async (p) => {
+      const orderAvailable = await checkAvailableOrder(p.MSHH, p.SoLuong);
+
+      return {
+        productCart: p,
+        isAvailable: orderAvailable.isAvailable,
+        quantityAvailable: orderAvailable.quantityAvailable,
+        data: orderAvailable.productDoc,
+      };
+    });
+    const checkOrderMap = await Promise.all(promiseCheckAvailable);
+
+    const productNotOrder = checkOrderMap.filter((c) => c.isAvailable == false);
+
+    const msgText = productNotOrder.reduce((acc, item) => {
+      return acc + item.data + ":" + item.quantityAvailable + "\n";
+    }, "");
+
+    if (productNotOrder.length > 0) {
+      return {
+        DT: [],
+        EC: -2,
+        EM: `Đã có người vừa đặt số lượng không đủ cấp cho bạn.\nSố lượng có thể đặt:\n${msgText}`,
+      };
+    }
+
+    //====================================================================================================
 
     // Cập nhật thông tin người dùng
 
@@ -259,11 +316,33 @@ const deleted = async (rawData) => {
 
 const revenueProduct = async (rawData) => {
   try {
-     
-     
-
     return {
       EM: "Doanh thu mỗi sản phẩm mỗi tháng",
+      EC: 0,
+      DT: data,
+    };
+  } catch (error) {
+    console.log(">>> error", error);
+    return {
+      EM: " Lỗi server",
+      EC: -5,
+      DT: [],
+    };
+  }
+};
+
+const dashboardAll = async (rawData) => {
+  try {
+    const customers = await db.Customer.countDocuments({});
+    const product = await db.Product.countDocuments({});
+    const order = await db.Order.countDocuments({});
+    const data = {
+      customers,
+      product,
+      order,
+    };
+    return {
+      EM: "Lấy dữ liệu thành công",
       EC: 0,
       DT: data,
     };
@@ -284,4 +363,5 @@ export default {
   update,
   deleted,
   revenueProduct,
+  dashboardAll,
 };

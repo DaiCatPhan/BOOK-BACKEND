@@ -152,6 +152,21 @@ class OrderController {
       console.log(">>> error", error);
     }
   }
+
+  // [GET] /api/v1/order/dashboard
+  async dashboard(req, res) {
+    try {
+      // check vaidate
+      const data = await OrderService.dashboardAll();
+      return res.status(200).json({
+        EM: data.EM,
+        EC: data.EC,
+        DT: data.DT,
+      });
+    } catch (error) {
+      console.log(">>> error", error);
+    }
+  }
 }
 
 export default new OrderController();

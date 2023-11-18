@@ -8,5 +8,6 @@ router.get("/read", OrderController.read);
 router.put("/update", OrderController.update);
 router.delete("/delete", OrderController.delete);
 router.get("/revenue", OrderController.revenue);
+router.get("/dashboard", OrderController.dashboard);
 
 export default router;
