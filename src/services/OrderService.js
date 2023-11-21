@@ -314,17 +314,44 @@ const deleted = async (rawData) => {
   }
 };
 
-const revenueProduct = async (rawData) => {
+const revenueProduct = async () => {
   try {
+    const products = await db.Product.find().lean();
+
+    const resultPromise = products.map(async (book) => {
+      const orderDetails = await db.OrderDetail.find().populate({
+        path: "MSHH",
+        match: { _id: book._id },
+      });
+
+      return {
+        ...book,
+        orderDetails,
+      };
+    });
+
+    const resultRaw = await Promise.all(resultPromise);
+    const result = resultRaw.map((item) => {
+      const detail = item.orderDetails.filter((item) => item.MSHH != null);
+      const result = detail.reduce((total, item) => {
+        return total + item.SoLuong * item.GiaDatHang;
+      }, 0);
+
+      return {
+        TenHH: item.TenHH,
+        totalMoney: result,
+      };
+    });
+
     return {
       EM: "Doanh thu mỗi sản phẩm mỗi tháng",
       EC: 0,
-      DT: data,
+      DT: result,
     };
   } catch (error) {
-    console.log(">>> error", error);
+    console.error("Lỗi:", error);
     return {
-      EM: " Lỗi server",
+      EM: "Lỗi server",
       EC: -5,
       DT: [],
     };
