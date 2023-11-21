@@ -339,6 +339,7 @@ const revenueProduct = async () => {
 
       return {
         TenHH: item.TenHH,
+        HinhHH: item.HinhHH,
         totalMoney: result,
       };
     });
